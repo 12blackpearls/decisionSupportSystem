@@ -1,0 +1,314 @@
+<!doctype html>
+
+<html>
+<head>
+<meta charset="utf-8" />
+<title>IPA vs IPS</title>
+
+<link href="css.css" rel="stylesheet">
+<link rel="stylesheet" href="css/materialize.min.css">
+</head>
+
+<body>
+  <div class="row">
+    <div class="col s12" id="judul">
+      <div class="row">
+        <div class="col s6 offset-s3" id="judulteks">
+          <h1>IPA vs IPS</h1>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col s6">
+      <p>Masukkan data training : </p>
+      <div id="inputtrain" class="clearfix">
+        <input type="file" id="files" name="files[]" multiple />
+      </div>
+    </div>
+    <div class="col s6">
+      <p>Masukkan data testing : </p>
+      <div id="inputtest" class="clearfix">
+        <input type="file" id="filestest" name="files[]" multiple />
+      </div>
+    </div>
+  </div>
+  <hr />
+  <div class="row">
+    <div class="col s4 offset-s4">
+      <output id="list">
+      </output>
+    </div>
+  </div>
+  <hr />
+  <div class="row" id="output">
+    <div class="col s8" style="border-right:1px solid #7f8c8d;">
+      <p>Input Data</p>
+      <table id="contents">
+      </table>
+    </div>
+    <div class="col s4">
+      <p>Hasil Testing Data</p>
+      <table id="checkagain" >
+      </table>
+    </div>
+  </div>
+
+
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+  <script src="jquery.csv.js"></script>
+  <script>
+    var alldata = '';
+    var alldatas = '';
+    $(document).ready(function() {
+      if(isAPIAvailable()) {
+        $('#files').bind('change', handleFileSelect);
+      }
+    });
+
+    $(document).ready(function() {
+      if(isAPIAvailable()) {
+        $('#filestest').bind('change', handleFileSelects);
+      }
+    });
+
+    function isAPIAvailable() {
+      // Check for the various File API support.
+      if (window.File && window.FileReader && window.FileList && window.Blob) {
+        // Great success! All the File APIs are supported.
+        return true;
+      } else {
+        // source: File API availability - http://caniuse.com/#feat=fileapi
+        // source: <output> availability - http://html5doctor.com/the-output-element/
+        document.writeln('The HTML5 APIs used in this form are only available in the following browsers:<br />');
+        // 6.0 File API & 13.0 <output>
+        document.writeln(' - Google Chrome: 13.0 or later<br />');
+        // 3.6 File API & 6.0 <output>
+        document.writeln(' - Mozilla Firefox: 6.0 or later<br />');
+        // 10.0 File API & 10.0 <output>
+        document.writeln(' - Internet Explorer: Not supported (partial support expected in 10.0)<br />');
+        // ? File API & 5.1 <output>
+        document.writeln(' - Safari: Not supported<br />');
+        // ? File API & 9.2 <output>
+        document.writeln(' - Opera: Not supported');
+        return false;
+      }
+    }
+
+    function handleFileSelect(evt) {
+      var files = evt.target.files; // FileList object
+      var file = files[0];
+      // read the file metadata
+      var output = ''
+          output += '<span style="font-weight:bold;">' + escape(file.name) + '</span><br />\n';
+          output += ' - FileType: ' + (file.type || 'n/a') + '<br />\n';
+          output += ' - FileSize: ' + file.size + ' bytes<br />\n';
+          output += ' - LastModified: ' + (file.lastModifiedDate ? file.lastModifiedDate.toLocaleDateString() : 'n/a') + '<br />\n';
+      // read the file contents
+      printTable(file);
+      // post the results
+      $('#list').append(output);
+    }
+
+    function handleFileSelects(evt) {
+      var files = evt.target.files; // FileList object
+      var file = files[0];
+      // read the file metadata
+      var output = ''
+          output += '<span style="font-weight:bold;">' + escape(file.name) + '</span><br />\n';
+          output += ' - FileType: ' + (file.type || 'n/a') + '<br />\n';
+          output += ' - FileSize: ' + file.size + ' bytes<br />\n';
+          output += ' - LastModified: ' + (file.lastModifiedDate ? file.lastModifiedDate.toLocaleDateString() : 'n/a') + '<br />\n';
+      // read the file contents
+      printTables(file);
+      // post the results
+      $('#list').append(output);
+    }
+
+    function printTable(file) {
+      var reader = new FileReader();
+      reader.readAsText(file);
+      reader.onload = function(event){
+        var csv = event.target.result;
+        var data = $.csv.toArrays(csv);
+        alldata = data;
+        var html = '';
+        for(var row in data) {
+          html += '<tr>\r\n';
+          for(var item in data[row]) {
+            html += '<td>' + data[row][item] + '</td>\r\n';
+          }
+          html += '</tr>\r\n';
+        }
+        
+        $('#contents').html(html);
+        //checking();
+      };
+      reader.onerror = function(){ alert('Unable to read ' + file.fileName); };
+    }
+
+    function printTables(file) {
+      var reader = new FileReader();
+      reader.readAsText(file);
+      reader.onload = function(event){
+        var csv = event.target.result;
+        var data = $.csv.toArrays(csv);
+        alldatas = data;
+        var html = '';
+        //$('#contents').html(html);
+        checking();
+      };
+      reader.onerror = function(){ alert('Unable to read ' + file.fileName); };
+    }
+
+    function checking() {
+      var html = '';
+      // for(var i = 0; i < alldata.length; i++) {
+      //   html += '<tr>\r\n';
+      //   for(var j = 0; j < alldata[i].length; j++) {
+      //     html += '<td>' + alldata[i][j] + '</td>\r\n';
+      //   }
+      //   html += '</tr>\r\n';
+      // }
+
+
+      var attIPA = [];
+      for(var i = 0; i < 20; i++) {
+        attIPA[i] = [];
+      }
+      var dummipa = 0; 
+      var dummips = 0;
+
+      //try count mean height
+      attIPA[0][0] = 0; attIPA[0][1] = 0; attIPA[0][2] = 0; attIPA[1][0] = 0; attIPA[1][1] = 0; attIPA[1][2] = 0;
+      attIPA[0][3] = 0; attIPA[0][4] = 0; attIPA[0][5] = 0; attIPA[1][3] = 0; attIPA[1][4] = 0; attIPA[1][5] = 0;
+      //html += attIPA[0][0];
+      for(var i = 1; i <= alldata.length - 1; i++) {
+        //html += 'yey';
+        if(alldata[i][7] == 'IPA') {
+          attIPA[0][0] = attIPA[0][0] + parseFloat(alldata[i][1]);
+          attIPA[0][1] = attIPA[0][1] + parseFloat(alldata[i][2]);
+          attIPA[0][2] = attIPA[0][2] + parseFloat(alldata[i][3]);
+          attIPA[0][3] = attIPA[0][3] + parseFloat(alldata[i][4]);
+          attIPA[0][4] = attIPA[0][4] + parseFloat(alldata[i][5]);
+          attIPA[0][5] = attIPA[0][5] + parseFloat(alldata[i][6]);
+          dummipa++;
+        }
+        if(alldata[i][7] == 'IPS') {
+          attIPA[1][0] = attIPA[1][0] + parseFloat(alldata[i][1]);
+          attIPA[1][1] = attIPA[1][1] + parseFloat(alldata[i][2]);
+          attIPA[1][2] = attIPA[1][2] + parseFloat(alldata[i][3]);
+          attIPA[1][3] = attIPA[1][3] + parseFloat(alldata[i][4]);
+          attIPA[1][4] = attIPA[1][4] + parseFloat(alldata[i][5]);
+          attIPA[1][5] = attIPA[1][5] + parseFloat(alldata[i][6]);
+          dummips++;
+        }
+      //   att = att + alldata[i][0];-
+      }
+      for(var i = 0; i < 6; i++) {
+        attIPA[0][i] = parseFloat(attIPA[0][i]) / dummipa;
+        //html += attIPA[0][i];
+        attIPA[1][i] = parseFloat(attIPA[1][i]) / dummips;
+        //html += 'Rata - rata : ' + attIPA[1][i] + '</br>';
+      }
+      // att = att + parseInt(alldata[1][0]);
+      //att = att / 4;
+      //attIPA[0] = parseFloat(attIPA[0]) / dumm;
+      //html += attIPA[0];
+
+      //try count variance height 
+      attIPA[0][6] = 0; attIPA[0][7] = 0; attIPA[0][8] = 0; attIPA[1][6] = 0; attIPA[1][7] = 0; attIPA[1][8] = 0;
+      attIPA[0][9] = 0; attIPA[0][10] = 0; attIPA[0][11] = 0; attIPA[1][9] = 0; attIPA[1][10] = 0; attIPA[1][11] = 0;
+      //html += attIPA[0][0];
+      for(var i = 1; i <= alldata.length - 1; i++) {
+        //html += 'yey';
+        if(alldata[i][7] == 'IPA') {
+          attIPA[0][6] = attIPA[0][6] + Math.pow(parseFloat(alldata[i][1])-parseFloat(attIPA[0][0]),2);
+          attIPA[0][7] = attIPA[0][7] + Math.pow(parseFloat(alldata[i][2])-parseFloat(attIPA[0][1]),2);
+          attIPA[0][8] = attIPA[0][8] + Math.pow(parseFloat(alldata[i][3])-parseFloat(attIPA[0][2]),2);
+          attIPA[0][9] = attIPA[0][9] + Math.pow(parseFloat(alldata[i][4])-parseFloat(attIPA[0][3]),2);
+          attIPA[0][10] = attIPA[0][10] + Math.pow(parseFloat(alldata[i][5])-parseFloat(attIPA[0][4]),2);
+          attIPA[0][11] = attIPA[0][11] + Math.pow(parseFloat(alldata[i][6])-parseFloat(attIPA[0][5]),2);
+          //dummipa++;
+        }
+        if(alldata[i][7] == 'IPS') {
+          attIPA[1][6] = attIPA[1][6] + Math.pow(parseFloat(alldata[i][1])-parseFloat(attIPA[1][0]),2);
+          attIPA[1][7] = attIPA[1][7] + Math.pow(parseFloat(alldata[i][2])-parseFloat(attIPA[1][1]),2);
+          attIPA[1][8] = attIPA[1][8] + Math.pow(parseFloat(alldata[i][3])-parseFloat(attIPA[1][2]),2);
+          attIPA[1][9] = attIPA[1][9] + Math.pow(parseFloat(alldata[i][4])-parseFloat(attIPA[1][3]),2);
+          attIPA[1][10] = attIPA[1][10] + Math.pow(parseFloat(alldata[i][5])-parseFloat(attIPA[1][4]),2);
+          attIPA[1][11] = attIPA[1][11] + Math.pow(parseFloat(alldata[i][6])-parseFloat(attIPA[1][5]),2);
+          //dummips++;
+        }
+      //   att = att + alldata[i][0];-
+      }
+      for(var i = 0; i < 6; i++) {
+        attIPA[0][i+6] = parseFloat(attIPA[0][i+6]) / (dummipa-1);
+        //html += attIPA[0][i+6];
+        attIPA[1][i+6] = parseFloat(attIPA[1][i+6]) / (dummips-1);
+        //html += 'Variance : ' + attIPA[1][i+6] + '</br>';
+      }
+      // attIPA[1] = 0;
+      // for(var i = 0; i <= alldata.length - 1; i++) {
+      //   if(alldata[i][3] == 'male') {
+      //     attIPA[1] = parseFloat(attIPA[1]) + Math.pow(parseFloat(alldata[i][0])-parseFloat(attIPA[0]),2);
+      //   }
+      //   if(alldata[i][3] == 'female') {
+
+      //   }
+      // }
+
+      // attIPA[1] = parseFloat(attIPA[1]) / (dumm-1);
+      // html += '\n' + attIPA[1];
+
+      //var test = [];
+      //test[0] = 90.5; test[1] = 92.5; test[2] = 88.1; test[3] = 70; test[4] = 90; test[5] = 77;
+
+      
+      html += 	'<table>' +
+      				'<tr>' +
+        				'<th> NISN </td>'+
+        				'<th> Jurusan </td>'+
+        				'<th> Nilai Posterior </td>'+
+        			'</tr>'+
+        		'</table>'
+      //Naive bayes & posterior counting
+      for(var z = 1; z <= alldatas.length - 1; z++) {
+        var a = 0; attIPA[2][0] = 0; attIPA[2][1] = 0; attIPA[2][2] = 0; attIPA[2][3] = 0; attIPA[2][4] = 0; attIPA[2][5] = 0;
+        attIPA[2][6] = 0; attIPA[2][7] = 0; attIPA[2][8] = 0; attIPA[2][9] = 0; attIPA[2][10] = 0; attIPA[2][11] = 0;
+        for (var j = 0; j < 2; j++){
+          var b = 6;
+          for(var i = 0; i < 6; i++) {
+            attIPA[2][a] = attIPA[2][a] + parseFloat(1/Math.sqrt(2*3.14*parseFloat(attIPA[j][b]))*Math.exp(-1*Math.pow(parseFloat(alldatas[z][i+1])-parseFloat(attIPA[j][i]),2)/(2*parseFloat(attIPA[j][b]))));
+            //html += 'Naive Bayes : ' + attIPA[2][a] + '</br>';
+            a++; b++;
+          }
+        }
+
+        attIPA[3][0] = alldatas[z][0];
+        if(parseFloat(dummipa / (alldata.length - 1) * attIPA[2][0] * attIPA[2][1] * attIPA[2][2] * attIPA[2][3] * attIPA[2][4] * attIPA[2][5]) > parseFloat(dummips / (alldata.length - 1) * attIPA[2][6] * attIPA[2][7] * attIPA[2][8] * attIPA[2][9] * attIPA[2][10] * attIPA[2][11]) ) {
+          attIPA[3][1] = 'IPA';
+          attIPA[3][2] = parseFloat( attIPA[2][0] * attIPA[2][1] * attIPA[2][2] * attIPA[2][3] * attIPA[2][4] * attIPA[2][5]);
+        } else {
+          attIPA[3][1] = 'IPS';
+          attIPA[3][2] = parseFloat( attIPA[2][6] * attIPA[2][7] * attIPA[2][8] * attIPA[2][9] * attIPA[2][10] * attIPA[2][11]);
+        }
+        //html += '</br>' + 'Hasil : </br>' + 'Siswa dengan NISN ' + attIPA[3][0] + ' sebaiknya memilih jurusan ' + attIPA[3][1] + '. Keputusan diambil berdasarkan nilai posterior sebesar ' + attIPA[3][2] + '. </br>';
+        html += '<table>'+
+        			'<tr>' +
+        				'<td>' + attIPA[3][0] + '</td>' +
+        				'<td>' + attIPA[3][1] + '</td>' +
+        				'<td>' + attIPA[3][2] + '</td>' +
+        			'</tr>' +
+        		'</table>'
+      }
+
+      // var result = 0;
+      // result = result + parseFloat(1/Math.sqrt(2*3.14*parseFloat(attIPA[1]))*Math.exp(-1*Math.pow(6-parseFloat(attIPA[0]),2)/(2*parseFloat(attIPA[1]))));
+      //html += '\n' + dummipa + ' ' + dummips + ' ' + alldatas.length;
+
+      $('#checkagain').html(html);
+    }
+  </script>
+</body>
+</html>

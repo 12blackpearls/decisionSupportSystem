@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<library>
+	<manage_target braces="false" utf8="false"></manage_target>
+	<library_folder monitor="false"></library_folder>
+	<taglist/>
+	<doclist>
+		<doc>
+			<filename></filename>
+			<key>Wu2013</key>
+			<notes></notes>
+			<bib_type>Article</bib_type>
+			<bib_doi></bib_doi>
+			<bib_title>A common type system for clinical natural language processing.</bib_title>
+			<bib_authors>Wu, Stephen Tze-Inn and Kaggal, Vinod and Dligach, Dmitriy and Masanz, James J. and Chen, Pei and Becker, Lee and Chapman, Wendy Webber and Savova, Guergana K. and Liu, Hongfang and Chute, Christopher G.</bib_authors>
+			<bib_journal>J. Biomedical Semantics</bib_journal>
+			<bib_volume>4</bib_volume>
+			<bib_number></bib_number>
+			<bib_pages>1</bib_pages>
+			<bib_year>2013</bib_year>
+		</doc>
+		<doc>
+			<filename></filename>
+			<key>ref1</key>
+			<notes></notes>
+			<bib_type>Article</bib_type>
+			<bib_doi></bib_doi>
+			<bib_title>Natural Language Processing and its Use in Education</bib_title>
+			<bib_authors>Alhawiti, Khaled M.</bib_authors>
+			<bib_journal>International Journal of Advanced Computer Science &amp; Applications</bib_journal>
+			<bib_volume>1</bib_volume>
+			<bib_number>5</bib_number>
+			<bib_pages>72-76</bib_pages>
+			<bib_year></bib_year>
+			<bib_extra key="Issn">2158-107X</bib_extra>
+			<bib_extra key="Publisher">Citeseer</bib_extra>
+		</doc>
+		<doc>
+			<filename></filename>
+			<key>ref1</key>
+			<notes></notes>
+			<bib_type>Article</bib_type>
+			<bib_doi></bib_doi>
+			<bib_title>Sentiment analysis in twitter using Natural Language Processing (NLP) and classification algorithm</bib_title>
+			<bib_authors>Waykar, Pranav and Wadhwani, Kailash and More, Pooja</bib_authors>
+			<bib_journal></bib_journal>
+			<bib_volume></bib_volume>
+			<bib_number></bib_number>
+			<bib_pages></bib_pages>
+			<bib_year></bib_year>
+		</doc>
+	</doclist>
+</library>
